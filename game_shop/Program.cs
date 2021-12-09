@@ -13,6 +13,7 @@ namespace game_shop
         string login;
         string password;
         public string Access { get; set; }
+        public DateTime date = new DateTime();
 
         public string Login
         {
@@ -35,6 +36,11 @@ namespace game_shop
             {
                 password = value;
             }
+        }
+        public DateTime Date
+        {
+            get { return date; }
+            set { date = value; }
         }
     }
 
@@ -343,11 +349,11 @@ namespace game_shop
                 Registration(users, "admin");
             }
 
-            foreach (User user in users)
+           /* foreach (User user in users)
             {
                 Console.WriteLine($"Login: {user.Login}\nPasswrod: {user.Password}");
             }
-            Console.ReadLine();
+            Console.ReadLine();*/
 
             Menu(users, computers, pristavkas);
         }
@@ -372,13 +378,20 @@ namespace game_shop
                     case 0:
                         return;
                     case 1:
-                        IsLogin(users, "admin");        
+                        if(IsLogin(users, "admin"))
+                        {
+                            Admin.Menu(users, pristavkas, computers);
+                        }
+                        else
+                        {
+                            DisplayMessage("Некорректный пароль");
+                        }
                         break;
                     case 2:
-
-                        IsLogin(users, "user");
+                        PreMenuUser(users, computers, pristavkas);
                         break;
                     default:
+
                         break;
 
                 }
@@ -386,6 +399,7 @@ namespace game_shop
         }
         static bool IsLogin(List<User> users, string access)
         {
+            Console.Clear();
             string login = "", password = "";
             Console.Write("Login: ");
             login = Console.ReadLine();
@@ -412,15 +426,50 @@ namespace game_shop
             Console.Write("Пароль: ");
             user.Password = Console.ReadLine();
             user.Access = access;
+            user.date = DateTime.Now;
             users.Add(user);
 
-            WriteToFileUser(users);
             DisplayMessage("Регистрация прошла успешна");
+            WriteToFileUser(users);
         }
 
-        static void PreMenuUser()
+        static void PreMenuUser(List<User> users, List<Computer> computers, List<Pristavka> pristavkas)
         {
-            Console.WriteLine("1. Вход\n2. Регистрация\n0. Назад");
+            int choose = 0;
+            try
+            {
+                choose = Convert.ToInt32(Console.ReadLine());
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            while (true)
+            {
+                Console.WriteLine("1. Вход\n2. Регистрация\n0. Назад");
+                switch (choose)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        if (IsLogin(users, "user"))
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                        break;
+                    case 2:
+                        Registration(users, "user");
+                        break;
+                    default:
+
+                        break;
+                }
+            }
         }
 
         static void GetRecord(List<User> users, List<Computer> computers, List<Pristavka> pristavkas)
@@ -521,8 +570,8 @@ namespace game_shop
         public static void DisplayMessage(string message)
         {
             Console.WriteLine(message);
-            Console.Clear();
             Thread.Sleep(400);
+            Console.Clear();
         }
     }
 }
