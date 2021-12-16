@@ -10,106 +10,52 @@ namespace game_shop
     [Serializable]
     class User
     {
+        public int Id { get; set; }
         string login;
         string password;
+        public string Name { get; set; }
         public string Access { get; set; }
-        public DateTime date = new DateTime();
+        string phoneNumber;
+        public string Address { get; set; }
+        DateTime registrationDate = new DateTime();
 
         public string Login
         {
-            get
-            {
-                return login;
-            }
-            set
-            {
-                login = value;
-            }
+            get { return login; }
+            set { login = value; }
         }
         public string Password
         {
-            get
-            {
-                return password;
-            }
+            get { return password; }
+            set { password = value; }
+        }
+        public DateTime RegistrationDate
+        {
+            get { return registrationDate; }
+            set { registrationDate = value; }
+        }
+        public string PhoneNumber
+        {
+            get { return phoneNumber; }
             set
             {
-                password = value;
+                if(value.Length != 9)
+                {
+                    Console.Write("Номер телефона должне состоять из \'оператора\' и \'номера абонента\': 00 000-00-00");
+                    PhoneNumber = Console.ReadLine();
+                }
+                else
+                {
+                    phoneNumber = "+375 " + $"{ulong.Parse(string.Concat(value)):(00 000-00-00)}";
+                }
             }
-        }
-        public DateTime Date
-        {
-            get { return date; }
-            set { date = value; }
         }
     }
 
     [Serializable]
-    class Electronic : ICommnad
+    class Order : Tovar
     {
-        string nameTovar;
-        string manufacturTovara;
-        int priceTovara;
-        public int InStockTovar { get; set; }
 
-
-        public string NameTovar
-        {
-            get
-            {
-                return nameTovar;
-            }
-            set
-            {
-                nameTovar = value;
-            }
-        }
-   
-        public string ManufacturTovar
-        {
-            get
-            {
-                return manufacturTovara;
-            }
-            set
-            {
-                manufacturTovara = value;
-            }
-        }
-        public int PriceTovara
-        {
-            get
-            {
-                return priceTovara;
-            }
-            set
-            {
-                priceTovara = value;
-            }
-        }
-        void ICommnad.Add()
-        {
-
-        }
-        /*void ICommnad.Edit()
-        {
-
-        }
-        void ICommnad.Display()
-        {
-
-        }*/
-/*        public int InStockTovar
-        {
-            get
-            {
-                return inStockTovar;
-            }
-            set
-            {
-                inStockTovar = value;
-            }
-        }*/
     }
 
     [Serializable]
@@ -120,6 +66,7 @@ namespace game_shop
         public double Price { get; set; }
         
     }
+    [Serializable]
     class Vnytrenosty : Tovar
     {
         public int OperationMemory { get; set; }
@@ -147,7 +94,9 @@ namespace game_shop
             Console.Write("Процессор: ");
             CPU = Console.ReadLine();
         }
+
     }
+    [Serializable]
     class Pristavka : Vnytrenosty, ICommnad
     {
         public string Color { get; set; }
@@ -157,181 +106,10 @@ namespace game_shop
             Add();
             Console.Write("Цвет: ");
             Color = Console.ReadLine();
+            Console.Write("Дисковод (true / false): ");
             Discovod = Convert.ToBoolean(Console.ReadLine());
         }
     }
-
-   /* class Metody
-    {
-        public static void AddOrder()
-        {
-            string codeOrder = "", FIO = "", phoneNumber = "", productOrder = "", priceOrder = "";
-            Console.WriteLine("Ведите номер заказа");
-            codeOrder = Console.ReadLine();
-            Console.WriteLine("Ведите ФИО");
-            FIO = Console.ReadLine();
-            Console.WriteLine("Ведите номер телефона");
-            phoneNumber = Console.ReadLine();
-            Console.WriteLine("Ведите название товара");
-            productOrder = Console.ReadLine();
-            Console.WriteLine("Ведите стоимость товара");
-            priceOrder = Console.ReadLine();
-        }
-
-        public static void SortElectronic()
-        {
-
-        }
-
-        public static void AddElectronic()
-        {
-            // название товара, производитель, цена, кол-во в наличии
-            string nameProduct = "", manufacturer = "", price = "", inStock = "";
-            Console.WriteLine("Введите название товара");
-            nameProduct = Console.ReadLine();
-            Console.WriteLine("Введите производитель");
-            manufacturer = Console.ReadLine();
-            Console.WriteLine("Введите цена");
-            price = Console.ReadLine();
-            Console.WriteLine("Введите кол-во в наличии ");
-            inStock = Console.ReadLine();
-        }
-
-        public static void Electronics()
-        {
-            //список товаров 
-            int key = 0;
-            Console.WriteLine("-----------------------------------------------------------------------------------------");
-            Console.WriteLine("|  Код товара  |  Название товара  |  Производитель  |  Цена  |  Количестово в наличии  |");
-            Console.WriteLine("-----------------------------------------------------------------------------------------");
-            while (true)
-            {
-                Console.WriteLine("1.Добавить товар\n2.Сортировать\n0.Назад");
-                key = Convert.ToInt32(Console.ReadLine());
-                switch (key)
-                {
-                    case 1:
-                        AddElectronic();
-                        break;
-                    case 2:
-                        SortElectronic();
-                        break;
-                    case 0:
-                        return;
-                    default:
-                        Console.WriteLine("Введено неверное значение");
-                        break;
-                }
-            }
-        }
-
-        public static void Oreder()
-        {
-            int key = 0;
-            Console.WriteLine("---------------------------------------------------------------------------------");
-            Console.WriteLine("|  Номер заказа  |  ФИО  |  Номер телефона  |  Название товара  |  Цена товара  |");
-            Console.WriteLine("---------------------------------------------------------------------------------");
-            while (true)
-            {
-                Console.WriteLine("1.Добавить заказ\n0.Назад");
-                key = Convert.ToInt32(Console.ReadLine());
-                switch (key)
-                {
-                    case 1:
-                        AddOrder();
-                        break;
-                    case 0:
-                        return;
-                    default:
-                        Console.WriteLine("Введено неверное значение");
-                        break;
-                }
-            }
-        }
-
-        public static void Deal()
-        {
-            int key;
-            Console.WriteLine("----------------------------------------------------------------------------------------------------------");
-            Console.WriteLine("|  Код сделки  |  ФИО  |  Номер телефона  |  Название товара  |  Цена товара  |  Дата совершения сделки  |");
-            Console.WriteLine("----------------------------------------------------------------------------------------------------------");
-            while (true)
-            {
-                Console.WriteLine("1.Добавить сделку\n0.Назад");
-                key = Convert.ToInt32(Console.ReadLine());
-                switch (key)
-                {
-                    case 1:
-                        //AddDeal();
-                        break;
-                    case 0:
-                        return;
-                    default:
-                        Console.WriteLine("Введено неверное значение");
-                        break;
-                }
-            }
-        }
-
-
-        public static void Admin_Menu()
-        {
-            int key = 0;
-            while (true)
-            {
-                Console.WriteLine("1.Посмотреть асортимент\n2.Редактировать Товар\n3.Заказы\n4.редактировать заказ.\n5.сделки\n0.Выход в меню");
-                key = Convert.ToInt32(Console.ReadLine());
-                switch (key)
-                {
-                    case 1:
-                        Electronics();
-                        break;
-                    case 2:
-                        //редактирование 
-                        break;
-                    case 3:
-                        Oreder();
-                        break;
-                    case 4:
-                        //редактирование товара
-                        break;
-                    case 5:
-                        Deal();
-                        break;
-                    case 0:
-                        return;
-                    default:
-                        Console.WriteLine("Введено не верное значение!");
-                        break;
-                }
-            }
-        }
-
-        public static void Guest_Menu()
-        {
-            int key = 0;
-            while (true)
-            {
-                Console.WriteLine("1.Просмотр Товара\n2.Сделать заказ\n0.Выход в меню");
-                key = Convert.ToInt32(Console.ReadLine());
-                switch (key)
-                {
-                    case 1:
-                        Electronics();
-                        break;
-                    case 2:
-                        AddOrder();
-                        break;
-                    case 0:
-                        return;
-                    default:
-                        Console.WriteLine("Введено не верное значение!");
-                        break;
-                }
-            }
-        }
-    }*/
-
     class Program
     {
         static void Main(string[] args)
@@ -341,6 +119,46 @@ namespace game_shop
             List<User> users = new List<User>();
             List<Pristavka> pristavkas = new List<Pristavka>();
             List<Computer> computers = new List<Computer>();
+            List<Order> orders = new List<Order>();
+
+            /*            try
+                        {
+
+                            Computer computer = new Computer();
+                            computer.Id = 1;
+                            computer.Name = "Комп-1";
+                            computer.Price = 199.99;
+                            computer.OperationMemory = 8;
+                            computer.GraphicCart = "GTX Geforse 670 2GB";
+                            computer.CPU = "intel icore 5";
+                            computers.Add(computer);
+                            WriteToFileComputer(computers);
+
+                            Console.ReadLine();
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);  
+                        }*/
+
+/*            try
+            {
+
+                Pristavka pristavka = new Pristavka();
+                pristavka.Id = 2;
+                pristavka.Name = "Название";
+                pristavka.Price = 980;
+                pristavka.Color = "nigger";
+                pristavka.Discovod = true;
+                pristavka.OperationMemory = 8;
+                pristavkas.Add(pristavka);
+                WriteToFilePristavka(pristavkas);
+                Console.ReadLine();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }*/
 
             GetRecord(users, computers, pristavkas);
 
@@ -349,21 +167,16 @@ namespace game_shop
                 Registration(users, "admin");
             }
 
-           /* foreach (User user in users)
-            {
-                Console.WriteLine($"Login: {user.Login}\nPasswrod: {user.Password}");
-            }
-            Console.ReadLine();*/
-
-            Menu(users, computers, pristavkas);
+            Menu(users, computers, pristavkas, orders);
         }
-        static void Menu(List<User> users, List<Computer> computers, List<Pristavka> pristavkas)
+        static void Menu(List<User> users, List<Computer> computers, List<Pristavka> pristavkas, List<Order> orders)
         {
    
             int choose = 0;
             while (true)
             {
-                Console.WriteLine("1. Вход - Админа\n2. Вход - Пользователь\n0. Выход");
+                Console.Clear();
+                Console.WriteLine("1. Вход - Администратора\n2. Вход - Пользователь\n0. Выход");
                 try
                 {
                     choose = Convert.ToInt32(Console.ReadLine());
@@ -380,7 +193,7 @@ namespace game_shop
                     case 1:
                         if(IsLogin(users, "admin"))
                         {
-                            Admin.Menu(users, pristavkas, computers);
+                            Admin.Menu(users, pristavkas, computers, orders);
                         }
                         else
                         {
@@ -391,7 +204,7 @@ namespace game_shop
                         PreMenuUser(users, computers, pristavkas);
                         break;
                     default:
-
+                        DisplayMessage("Некорректный ввод");
                         break;
 
                 }
@@ -419,35 +232,44 @@ namespace game_shop
         }
         static void Registration(List<User> users, string access)
         {
-            Console.WriteLine("Регистрация администратора");
-            User user = new User();          
+            User user = new User();
+            Console.WriteLine($"Регистрация \'{access}\'");
+                     
             Console.Write("Логин: ");
             user.Login = Console.ReadLine();
             Console.Write("Пароль: ");
             user.Password = Console.ReadLine();
+            Console.Write("Имя: ");
+            user.Name = Console.ReadLine();
+            int uniqueId = (users.Count == 0) ? users.Count : Convert.ToInt32(File.ReadAllText("uniqueId"));
+            ++uniqueId;
+            File.WriteAllText("uniqueId", uniqueId.ToString());
+            user.Id = uniqueId;
             user.Access = access;
-            user.date = DateTime.Now;
+            user.RegistrationDate = DateTime.Now;
+
             users.Add(user);
 
             DisplayMessage("Регистрация прошла успешна");
+
             WriteToFileUser(users);
         }
 
         static void PreMenuUser(List<User> users, List<Computer> computers, List<Pristavka> pristavkas)
         {
-            int choose = 0;
-            try
-            {
-                choose = Convert.ToInt32(Console.ReadLine());
-            }
-            catch(Exception ex)
-            {
-
-            }
-
             while (true)
             {
-                Console.WriteLine("1. Вход\n2. Регистрация\n0. Назад");
+                int choose = 0;
+                Console.Clear();
+                Console.WriteLine("1. Вход\n2. Регистрация\n0. Назад\n>");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    DisplayMessage(ex.Message);
+                }
                 switch (choose)
                 {
                     case 0:
@@ -455,21 +277,153 @@ namespace game_shop
                     case 1:
                         if (IsLogin(users, "user"))
                         {
- 
+                            Client.Menu();
                         }
                         else
                         {
-
+                            DisplayMessage("Неправильный логин или пароль");
                         }
                         break;
                     case 2:
                         Registration(users, "user");
                         break;
                     default:
-
+                        DisplayMessage("Некорректный ввод");
                         break;
                 }
             }
+        }
+
+        public static void SortMenu(List<Computer> computers, List<Pristavka> pristavkas)
+        {
+            while (true)
+            {
+                int choose = 0;
+                Console.Clear();
+                Console.WriteLine("1. Сортировка по цене (возрастание)\n2. Сортировка по цене (убывание)\n3. Сортировка по Id (возрастание)\n4. Сортировка по названию\n0. Назад\n>");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    DisplayMessage(ex.Message);
+                }
+                switch (choose)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        Sort.PriceIncrease(computers, pristavkas);
+                        break;
+                    case 2:
+                        Sort.PriceDecrease(computers, pristavkas, 0, (computers.Count > pristavkas.Count) ? computers.Count - 1 : pristavkas.Count - 1);
+                        break;
+                    case 3:
+                        Sort.IdIncrease(computers, pristavkas);
+                        break;
+                    case 4:
+                        Sort.NameIncrease(computers, pristavkas);
+                        break;
+                    default:
+                        DisplayMessage("Некорректный ввод");
+                        break;
+                }
+            }
+        }
+        public static void FindMenu()
+        {
+
+        }
+        public static User GetUser(List<User> users, int id)
+        {
+            foreach (User user in users)
+            {
+                if(user.Id == id)
+                {
+                    return user;
+                }
+            }
+            return null;
+        }
+        public static void EditDataUser(List<User> users, int id)
+        {
+            User user = new User();
+            foreach (User userData in users)
+            {
+                if (userData.Id == id)
+                {
+                    user = userData;
+                }
+            }
+            while (true)
+            {
+                Console.Clear();
+                int choose = 0;
+                Console.WriteLine("1. Изменить логин\n2. Изменить пароль\n0. Назад");
+                Console.Write(">");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    Program.DisplayMessage(ex.Message);
+                }
+                Console.Clear();
+                switch (choose)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        Console.Write($"Страный логин: {user.Login}\nНовый логин: ");
+                        user.Login = Console.ReadLine();
+                        DisplayMessage("Логин успешно изменён");
+                        break;
+                    case 2:
+                        Console.Write($"Страный пароль: {user.Password}\nНовый пароль: ");
+                        user.Password = Console.ReadLine();
+                        DisplayMessage("Пароль успешно изменён");
+                        break;
+                    default:
+                        Console.WriteLine("Некорректный ввод");
+                        break;
+                }
+
+                Program.WriteToFileUser(users);
+            }
+        }
+        public static void ProductTable(List<Computer> computers, List<Pristavka> pristavkas)
+        {
+            if(computers.Count == 0 && pristavkas.Count == 0)
+            {
+                Console.Write("Список пуст");
+                return;
+            }
+
+            var table = new Table("Id", "Название", "Цена", "Оперативная память", "Видеокарта", "Процессор", "Цвет", "Дисковод");
+
+            foreach (Computer computer in computers)
+            {
+                table.AddRow(computer.Id, computer.Name, computer.Price + " BYN", computer.OperationMemory + " ГБ", computer.GraphicCart, computer.CPU, "-", "-");
+            }
+            foreach (Pristavka pristavka in pristavkas)
+            {
+                table.AddRow(pristavka.Id, pristavka.Name, pristavka.Price + " BYN", pristavka.OperationMemory + " ГБ", "-", "-", pristavka.Color, (pristavka.Discovod == true) ? "Есть" : "Отсуствует");
+            }
+
+            table.Print();
+        }
+
+        public static void UserTable(List<User> users)
+        {
+            var table = new Table("Id", "Логин", "Пароль", "Имя", "Номер телефона", "Адрес");
+
+            foreach (User user in users)
+            {
+                table.AddRow(user.Id, user.Login + $" ({user.Access})", user.Password, user.Name, user.PhoneNumber ?? "null", user.Address ?? "null");
+            }
+            table.Print();
         }
 
         static void GetRecord(List<User> users, List<Computer> computers, List<Pristavka> pristavkas)
@@ -513,7 +467,7 @@ namespace game_shop
                 Console.WriteLine(ex.Message);
             }
         }
-        static void WriteToFileUser(List<User> users)
+        public static void WriteToFileUser(List<User> users)
         {
             string path = "users";
             var elems = users;
@@ -531,7 +485,7 @@ namespace game_shop
                 Console.WriteLine(ex.Message);
             }
         }
-        static void WriteToFilePristavka(List<Pristavka> pristavkas)
+        public static void WriteToFilePristavka(List<Pristavka> pristavkas)
         {
             string path = "pristavkas";
             var elems = pristavkas;
@@ -549,7 +503,7 @@ namespace game_shop
                 Console.WriteLine(ex.Message);
             }
         }
-        static void WtiteToFileComputer(List<Computer> computers)
+        public static void WriteToFileComputer(List<Computer> computers)
         {
             string path = "computers";
             var elems = computers;

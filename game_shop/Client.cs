@@ -6,7 +6,7 @@ namespace game_shop
 {
     class Client
     {
-        static void Menu()
+        public static void Menu()
         {
             while (true)
             {
