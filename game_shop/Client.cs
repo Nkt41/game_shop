@@ -20,16 +20,15 @@ namespace game_shop
                 {
                     Program.DisplayMessage(ex.ToString());
                 }
-
                 switch (choose)
                 {
                     case 0:
                         return;
                     case 1:
-
+                        //Sort.Price();
                         break;
                     case 2:
-
+                        //Find.
                         break;
                     case 3:
 

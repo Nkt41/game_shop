@@ -12,7 +12,44 @@ namespace game_shop
 
             while (true)
             {
-                Console.WriteLine("1. Товар\n2. Пользователи\n3. Профиль\n0. Назад");
+                Console.WriteLine("1. Товар\n2. Заказы\n3. Сделки\n4. Пользователи\n5. Профиль\n0. Назад");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+                switch (choose)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        ProductMenu();
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                    case 4:
+
+                        break;
+                    case 5:
+                        ProfilMenu(users);
+                        break;
+                }
+            }
+        }
+        static void ProductMenu()
+        {
+            //таблица
+            int choose = 0;
+            while (true)
+            {
+                Console.WriteLine("1. Добавить товар\n2. Сортировка по цене\n3. Поиск\n4. Редактирование\n5. Удаление\n0. Назад");
                 try
                 {
                     choose = Convert.ToInt32(Console.ReadLine());
@@ -29,17 +66,21 @@ namespace game_shop
 
                         break;
                     case 2:
-
+                        //Sort.Price(pristavkas, computers);
                         break;
                     case 3:
-                        ProfilMenu(users);
+                        //Find.
+                        break;
+                    case 4:
+
+                        break;
+                    case 5:
+
+                        break;
+                    default:
                         break;
                 }
             }
-        }
-        static void ProductMenu()
-        {
-
         }
         static void UsersMenu()
         {
