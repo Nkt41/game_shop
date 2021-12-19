@@ -121,45 +121,6 @@ namespace game_shop
             List<Computer> computers = new List<Computer>();
             List<Order> orders = new List<Order>();
 
-            /*            try
-                        {
-
-                            Computer computer = new Computer();
-                            computer.Id = 1;
-                            computer.Name = "Комп-1";
-                            computer.Price = 199.99;
-                            computer.OperationMemory = 8;
-                            computer.GraphicCart = "GTX Geforse 670 2GB";
-                            computer.CPU = "intel icore 5";
-                            computers.Add(computer);
-                            WriteToFileComputer(computers);
-
-                            Console.ReadLine();
-                        }
-                        catch(Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);  
-                        }*/
-
-/*            try
-            {
-
-                Pristavka pristavka = new Pristavka();
-                pristavka.Id = 2;
-                pristavka.Name = "Название";
-                pristavka.Price = 980;
-                pristavka.Color = "nigger";
-                pristavka.Discovod = true;
-                pristavka.OperationMemory = 8;
-                pristavkas.Add(pristavka);
-                WriteToFilePristavka(pristavkas);
-                Console.ReadLine();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }*/
-
             GetRecord(users, computers, pristavkas);
 
             if (users.Count == 0)
