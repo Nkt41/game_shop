@@ -6,7 +6,7 @@ namespace game_shop
 {
     interface ICommnad
     {
-        void Add();
+        void Add(int id);
         /*void Edit();
         void Display();*/
     }

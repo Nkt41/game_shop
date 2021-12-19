@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace game_shop
@@ -34,7 +35,7 @@ namespace game_shop
                         UsersMenu(users);
                         break;
                     case 3:
-
+                        OrderMenu(orders);
                         break;
                     case 4:
                         ProfilMenu(users);
@@ -56,7 +57,7 @@ namespace game_shop
             {
                 Console.Clear();
                 Program.ProductTable(computers, pristavkas);
-                Console.WriteLine("1. Добавить\n2. Редактировать\n3. Удалить\n4. Сортировка\n5. Поиск\n0. Назад");
+                Console.WriteLine("1. Добавить \n2. Редактировать\n3. Удалить\n4. Сортировка\n5. Поиск\n0. Назад");
                 try
                 {
                     choose = Convert.ToInt32(Console.ReadLine());
@@ -70,46 +71,117 @@ namespace game_shop
                     case 0:
                         return;
                     case 1:
-
+                        Add(computers, pristavkas);
                         break;
                     case 2:
-
+                        Edit(computers, pristavkas);
                         break;
                     case 3:
+                        DeleteProduct(computers, pristavkas);
                         break;
                     case 4:
-
+                        Program.SortMenu(computers, pristavkas);
                         break;
                     case 5:
-
+                        Program.FindMenu();
                         break;
                     default:
                         break;
                 }
             }
         }
-
-        public void AddTour(List<Tour> tours)
+        static void Add(List<Computer> computers, List<Pristavka> pristavkas)
         {
-            int uniqueId = (tours.Count == 0) ? tours.Count : Convert.ToInt32(File.ReadAllText("uniqueIdTour"));
+            int choose = 0;
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("1. Добавить компьютер\n2. Добавить приставку\n0. Назад");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+                switch (choose)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        AddComputer(computers);
+                        break;
+                    case 2:
+                        AddPristavka(pristavkas);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        static void Edit(List<Computer> computers, List<Pristavka> pristavkas)
+        {
+            int choose = 0;
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("1. Редактировать компьютер\n2. Редактировать приставку\n0. Назад");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+                switch (choose)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        EditComputer(computers);
+                        break;
+                    case 2:
+                        EditPristavka(pristavkas);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        static void AddComputer( List<Computer> computers)
+        {
+            int uniqueId = (computers.Count == 0) ? 0 : Convert.ToInt32(File.ReadAllText("uniqueIdTour"));
             ++uniqueId;
             File.WriteAllText("uniqueIdTour", uniqueId.ToString());
-            Tour tour = new Tour();
-            tour.Add(uniqueId);
-            tours.Add(tour);
+            Computer computer = new Computer();
+            computer.Add(uniqueId);
+            computers.Add(computer);
 
-            Program.DisplayMessage("Путёвка добавлена успешна");
-
-            Program.WriteToFileTour(tours);
+            Program.DisplayMessage("Техника добавлена успешна");
+            Program.WriteToFileComputer(computers);
         }
-        public void EditTour(List<Tour> tours)
+        static void AddPristavka(List<Pristavka> pristavkas)
+        {
+            int uniqueId = (pristavkas.Count == 0) ? 0 : Convert.ToInt32(File.ReadAllText("uniqueIdTour"));
+            ++uniqueId;
+            File.WriteAllText("uniqueIdTour", uniqueId.ToString());
+            Pristavka pristavka = new Pristavka();
+            pristavka.Add(uniqueId);
+            pristavkas.Add(pristavka);
+
+            Program.DisplayMessage("Приставка добавлена успешна");
+            Program.WriteToFilePristavka(pristavkas);
+        }
+        static void EditComputer(List<Computer> computers)
         {
             Console.Clear();
 
             int idEditProduct = 0;
-            Program.TourTable(tours);
+            Program.ComputerTable(computers);
 
-            Console.Write("Введите id редактироваемого тура\n>");
+            Console.Write("Введите id редактироваемого компьютера\n>");
             try
             {
                 idEditProduct = Convert.ToInt32(Console.ReadLine());
@@ -119,9 +191,9 @@ namespace game_shop
                 Program.DisplayMessage(ex.Message);
             }
 
-            if (idEditProduct < 0 || idEditProduct >= tours.Count)
+            if (idEditProduct < 0 || idEditProduct >= computers.Count)
             {
-                Console.WriteLine($"Тура с id - {idEditProduct} нету");
+                Console.WriteLine($"Компа с id - {idEditProduct} нету");
                 return;
             }
 
@@ -129,9 +201,9 @@ namespace game_shop
             {
                 Console.Clear();
                 int choose = 0;
-                Program.TourTable(tours);
+                Program.ComputerTable(computers);
                 Console.WriteLine("Что редактируем?");
-                Console.WriteLine($"1) Название\n2) Страна\n3) Длительность (день)\n4) Отель\n5) Стоимость\n0) Назад");
+                Console.WriteLine($"1) Название\n2) Цена\n3) Оперативная память\n4) Видео карта \n5) Процессор\n0) Назад");
                 Console.Write(">");
                 try
                 {
@@ -142,20 +214,18 @@ namespace game_shop
                     Program.DisplayMessage(ex.Message);
                 }
 
-                int i = 0;
-                for (i = 0; i < tours.Count; i++)
+                for (int i = 0; i < computers.Count; i++)
                 {
-                    if (tours[i].Id == idEditProduct)
+                    if (computers[i].Id == idEditProduct)
                     {
-                        /*                        Console.WriteLine($"tour id: {tours[i].Id}\nid edit: {idEditProduct}\ni: {i}");
-                                                Console.ReadLine();*/
+                        idEditProduct = i;
                         break;
                     }
                 }
 
                 if (choose > 0 && choose <= 5)
                 {
-                    EditTourField(tours, i, --choose);
+                    EditTourFieldComputer(computers, idEditProduct, --choose);
                 }
                 else
                 {
@@ -163,23 +233,30 @@ namespace game_shop
                 }
             }
         }
-        void EditTourField(List<Tour> tours, int idEditProduct, int idField)
+        static void EditTourFieldComputer(List<Computer> computers, int idEditProduct, int idField)
         {
             switch (idField)
             {
                 case 0:
-                    Console.Write($"Старые данные {tours[idEditProduct].Name}\nНовые данные: ");
-                    tours[idEditProduct].Name = Console.ReadLine();
+                    Console.Write($"Старые данные {computers[idEditProduct].Name}\nНовые данные: ");
+                    computers[idEditProduct].Name = Console.ReadLine();
                     break;
                 case 1:
-                    Console.Write($"Старые данные {tours[idEditProduct].Country}\nНовые данные: ");
-                    tours[idEditProduct].Country = Console.ReadLine();
-                    break;
-                case 2:
-                    Console.Write($"Старые данные {tours[idEditProduct].Duration}\nНовые данные: ");
+                    Console.Write($"Старые данные {computers[idEditProduct].Price}\nНовые данные: ");
                     try
                     {
-                        tours[idEditProduct].Duration = Convert.ToInt32(Console.ReadLine());
+                        computers[idEditProduct].Price = Convert.ToInt32(Console.ReadLine());
+                    }
+                    catch (Exception ex)
+                    {
+                        Program.DisplayMessage(ex.Message);
+                    }
+                    break;
+                case 2:
+                    Console.Write($"Старые данные {computers[idEditProduct].OperationMemory}\nНовые данные: ");
+                    try
+                    {
+                        computers[idEditProduct].OperationMemory = Convert.ToInt32(Console.ReadLine());
                     }
                     catch (Exception ex)
                     {
@@ -187,40 +264,157 @@ namespace game_shop
                     }
                     break;
                 case 3:
-                    Console.Write($"Старые данные {tours[idEditProduct].Hostel}\nНовые данные: ");
-                    tours[idEditProduct].Hostel = Console.ReadLine();
+                    Console.Write($"Старые данные {computers[idEditProduct].GraphicCart}\nНовые данные: ");
+                    computers[idEditProduct].GraphicCart = Console.ReadLine();
                     break;
                 case 4:
-                    Console.Write($"Старые данные {tours[idEditProduct].Cost}\nНовые данные: ");
+                    Console.Write($"Старые данные {computers[idEditProduct].CPU}\nНовые данные: ");
+                    computers[idEditProduct].CPU = Console.ReadLine();
+                    break;
+            }
+
+            Program.WriteToFileComputer(computers);
+        }
+
+        static void EditPristavka(List<Pristavka> pristavkas)
+        {
+            Console.Clear();
+
+            int idEditProduct = 0;
+            Program.PristavkaTable(pristavkas);
+
+            Console.Write("Введите id редактироваемого приставки\n>");
+            try
+            {
+                idEditProduct = Convert.ToInt32(Console.ReadLine());
+            }
+            catch (Exception ex)
+            {
+                Program.DisplayMessage(ex.Message);
+            }
+
+            if (idEditProduct < 0 || idEditProduct >= pristavkas.Count)
+            {
+                Console.WriteLine($"Компа с id - {idEditProduct} нету");
+                return;
+            }
+
+            while (true)
+            {
+                Console.Clear();
+                int choose = 0;
+                Program.PristavkaTable(pristavkas);
+                Console.WriteLine("Что редактируем?");
+                Console.WriteLine($"1) Название\n2) Цена\n3) Оперативная память\n4) Цвет \n5) Дисковод\n0) Назад");
+                Console.Write(">");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    Program.DisplayMessage(ex.Message);
+                }
+
+                for (int i = 0; i < pristavkas.Count; i++)
+                {
+                    if (pristavkas[i].Id == idEditProduct)
+                    {
+                        idEditProduct = i;
+                        break;
+                    }
+                }
+
+                if (choose > 0 && choose <= 5)
+                {
+                    EditTourFieldPristavka(pristavkas, idEditProduct, --choose);
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+        static void EditTourFieldPristavka(List<Pristavka> pristavkas, int idEditProduct, int idField)
+        {
+            switch (idField)
+            {
+                case 0:
+                    Console.Write($"Старые данные {pristavkas[idEditProduct].Name}\nНовые данные: ");
+                    pristavkas[idEditProduct].Name = Console.ReadLine();
+                    break;
+                case 1:
+                    Console.Write($"Старые данные {pristavkas[idEditProduct].Price}\nНовые данные: ");
                     try
                     {
-                        tours[idEditProduct].Cost = Convert.ToDouble(Console.ReadLine());
+                        pristavkas[idEditProduct].Price = Convert.ToInt32(Console.ReadLine());
                     }
                     catch (Exception ex)
                     {
                         Program.DisplayMessage(ex.Message);
                     }
                     break;
+                case 2:
+                    Console.Write($"Старые данные {pristavkas[idEditProduct].OperationMemory}\nНовые данные: ");
+                    try
+                    {
+                        pristavkas[idEditProduct].OperationMemory = Convert.ToInt32(Console.ReadLine());
+                    }
+                    catch (Exception ex)
+                    {
+                        Program.DisplayMessage(ex.Message);
+                    }
+                    break;
+                case 3:
+                    Console.Write($"Старые данные {pristavkas[idEditProduct].Color}\nНовые данные: ");
+                    pristavkas[idEditProduct].Color = Console.ReadLine();
+                    break;
+                case 4:
+                    Console.Write($"Старые данные {pristavkas[idEditProduct].Discovod}\nНовые данные: ");
+                    pristavkas[idEditProduct].Discovod = Convert.ToBoolean(Console.ReadLine());
+                    break;
             }
 
-            Program.WriteToFileTour(tours);
+            Program.WriteToFilePristavka(pristavkas);
         }
-        public void DeleteTours(List<Tour> tours)
+        static void DeleteProduct(List<Computer> computers, List<Pristavka> pristavkas)
         {
-            Program.TourTable(tours);
+            int idDeleteProduct = 0;
+            bool first = false;
+            Program.ProductTable(computers, pristavkas);
             Console.Write("ID удаляемого тура: ");
 
             try
             {
-                int idDeleteProduct = Convert.ToInt32(Console.ReadLine());
-                --idDeleteProduct;
-                tours.RemoveAt(idDeleteProduct);
+                idDeleteProduct = Convert.ToInt32(Console.ReadLine());
             }
             catch (Exception ex)
             {
                 Program.DisplayMessage(ex.Message);
             }
-            Program.WriteToFileTour(tours);
+
+
+            foreach (Computer computer in computers)
+            {
+                if (computer.Id == idDeleteProduct)
+                {
+                    first = true;
+                    computers.RemoveAt(idDeleteProduct);
+                    Program.WriteToFileComputer(computers);
+                }
+            }
+
+            if(!first)
+            {
+                foreach (Pristavka pristavka in pristavkas)
+                {
+                    if (pristavka.Id == idDeleteProduct)
+                    {
+                        pristavkas.RemoveAt(idDeleteProduct);
+                        Program.WriteToFilePristavka(pristavkas);
+                    }
+                }
+            }
         }
 
         static void UsersMenu(List<User> users)
@@ -369,6 +563,11 @@ namespace game_shop
             }
 
             Program.WriteToFileUser(users);
+        }
+
+        static void OrderMenu(List<Order> orders)
+        {
+
         }
         static void ProfilMenu(List<User> users)
         {

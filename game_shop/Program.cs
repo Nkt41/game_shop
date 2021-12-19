@@ -14,6 +14,7 @@ namespace game_shop
         string login;
         string password;
         public string Name { get; set; }
+        public string Surname { get; set; }
         public string Access { get; set; }
         string phoneNumber;
         public string Address { get; set; }
@@ -50,6 +51,10 @@ namespace game_shop
                 }
             }
         }
+        public void Add()
+        {
+
+        }
     }
 
     [Serializable]
@@ -71,7 +76,7 @@ namespace game_shop
     {
         public int OperationMemory { get; set; }
 
-        public void Add()
+        public void Add(int id)
         {
             Console.Write("Название: ");
             Name = Console.ReadLine();
@@ -79,6 +84,7 @@ namespace game_shop
             Price = Convert.ToDouble(Console.ReadLine());
             Console.Write("ОЗУ: ");
             OperationMemory = Convert.ToInt32(Console.ReadLine());
+            Id = id;
         }
     }
     [Serializable]
@@ -86,9 +92,9 @@ namespace game_shop
     {
         public string GraphicCart { get; set; }
         public string CPU { get; set; }
-        void ICommnad.Add()
+        void ICommnad.Add(int id)
         {
-            Add();
+            Add(id);
             Console.Write("Видео карта: ");
             GraphicCart = Console.ReadLine();
             Console.Write("Процессор: ");
@@ -101,13 +107,14 @@ namespace game_shop
     {
         public string Color { get; set; }
         public bool Discovod { get; set; }
-        void ICommnad.Add()
+        void ICommnad.Add(int id)
         {
-            Add();
+            Add(id);
             Console.Write("Цвет: ");
             Color = Console.ReadLine();
             Console.Write("Дисковод (true / false): ");
             Discovod = Convert.ToBoolean(Console.ReadLine());
+            Id = id;
         }
     }
     class Program
@@ -162,7 +169,7 @@ namespace game_shop
                         }
                         break;
                     case 2:
-                        PreMenuUser(users, computers, pristavkas);
+                        PreMenuUser(users, computers, pristavkas, orders);
                         break;
                     default:
                         DisplayMessage("Некорректный ввод");
@@ -216,7 +223,7 @@ namespace game_shop
             WriteToFileUser(users);
         }
 
-        static void PreMenuUser(List<User> users, List<Computer> computers, List<Pristavka> pristavkas)
+        static void PreMenuUser(List<User> users, List<Computer> computers, List<Pristavka> pristavkas, List<Order> orders)
         {
             while (true)
             {
@@ -238,7 +245,7 @@ namespace game_shop
                     case 1:
                         if (IsLogin(users, "user"))
                         {
-                            Client.Menu();
+                            Client.Menu(users, pristavkas, computers, orders);
                         }
                         else
                         {
@@ -376,6 +383,42 @@ namespace game_shop
             table.Print();
         }
 
+        public static void ComputerTable(List<Computer> computers)
+        {
+            if (computers.Count == 0)
+            {
+                Console.Write("Список пуст");
+                return;
+            }
+
+            var table = new Table("Id", "Название", "Цена", "Оперативная память", "Видеокарта", "Процессор");
+
+            foreach (Computer computer in computers)
+            {
+                table.AddRow(computer.Id, computer.Name, computer.Price + " BYN", computer.OperationMemory + " ГБ", computer.GraphicCart, computer.CPU, "-", "-");
+            }
+
+            table.Print();
+        }
+
+        public static void PristavkaTable(List<Pristavka> pristavkas)
+        {
+            if (pristavkas.Count == 0)
+            {
+                Console.Write("Список пуст");
+                return;
+            }
+
+            var table = new Table("Id", "Название", "Цена", "Оперативная память", "Видеокарта", "Процессор", "Цвет", "Дисковод");
+
+            foreach (Pristavka pristavka in pristavkas)
+            {
+                table.AddRow(pristavka.Id, pristavka.Name, pristavka.Price + " BYN", pristavka.OperationMemory + " ГБ", "-", "-", pristavka.Color, (pristavka.Discovod == true) ? "Есть" : "Отсуствует");
+            }
+
+            table.Print();
+        }
+
         public static void UserTable(List<User> users)
         {
             var table = new Table("Id", "Логин", "Пароль", "Имя", "Номер телефона", "Адрес");
@@ -389,7 +432,7 @@ namespace game_shop
 
         static void GetRecord(List<User> users, List<Computer> computers, List<Pristavka> pristavkas)
         {
-            string[] paths = { "users", "pristavkas", "computers" };
+            string[] paths = { "users", "pristavkas", "computers", "orders" };
             try
             {
                 for (int i = 0; i < paths.Length; i++)
@@ -468,6 +511,25 @@ namespace game_shop
         {
             string path = "computers";
             var elems = computers;
+
+            try
+            {
+                using (Stream stream = File.Open(path + ".bin", FileMode.OpenOrCreate))
+                {
+                    BinaryFormatter binary = new BinaryFormatter();
+                    binary.Serialize(stream, elems);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public static void WriteToFileOrder(List<Order> orders)
+        {
+            string path = "orders";
+            var elems = orders;
 
             try
             {
