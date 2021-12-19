@@ -83,7 +83,7 @@ namespace game_shop
                         Program.SortMenu(computers, pristavkas);
                         break;
                     case 5:
-                        Program.FindMenu();
+                        Program.FindMenu(computers, pristavkas);
                         break;
                     default:
                         break;
@@ -191,7 +191,7 @@ namespace game_shop
                 Program.DisplayMessage(ex.Message);
             }
 
-            if (idEditProduct < 0 || idEditProduct >= computers.Count)
+            if (idEditProduct < 0 || idEditProduct > computers.Count)
             {
                 Console.WriteLine($"Компа с id - {idEditProduct} нету");
                 return;
@@ -394,25 +394,38 @@ namespace game_shop
             }
 
 
+            int i = 0;
             foreach (Computer computer in computers)
             {
                 if (computer.Id == idDeleteProduct)
                 {
-                    first = true;
-                    computers.RemoveAt(idDeleteProduct);
-                    Program.WriteToFileComputer(computers);
+                    try
+                    {
+                        first = true;
+                        computers.RemoveAt(i);
+                        Program.WriteToFileComputer(computers);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.ReadLine();
+                    }
+                    
                 }
+                i++;
             }
 
-            if(!first)
+            i = 0;
+            if(first == false)
             {
                 foreach (Pristavka pristavka in pristavkas)
                 {
                     if (pristavka.Id == idDeleteProduct)
                     {
-                        pristavkas.RemoveAt(idDeleteProduct);
+                        pristavkas.RemoveAt(i);
                         Program.WriteToFilePristavka(pristavkas);
                     }
+                    i++;
                 }
             }
         }

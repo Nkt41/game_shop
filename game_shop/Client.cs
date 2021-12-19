@@ -25,13 +25,22 @@ namespace game_shop
                     case 0:
                         return;
                     case 1:
-                        Program.SortMenu(computers, pristavkas);
+                        ProductMenu(computers, pristavkas, orders, users);
                         break;
                     case 2:
-                        Program.FindMenu();
+                        MyOrder(users, orders);
                         break;
                     case 3:
-
+                        Console.Write("Введите логин:");
+                        string login = Console.ReadLine();
+                        for (int i = 0; i < users.Count; i++)
+                        {
+                            if (users[i].Login == login)
+                            {
+                                Program.EditDataUser(users, i);
+                                break;
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -39,7 +48,7 @@ namespace game_shop
             }
 
         }
-        static void ProductMenu(List<Computer> computers, List<Pristavka> pristavkas, List<Order> orders)
+        static void ProductMenu(List<Computer> computers, List<Pristavka> pristavkas, List<Order> orders, List<User> users)
         {
             while (true)
             {
@@ -64,12 +73,12 @@ namespace game_shop
                         Program.SortMenu(computers, pristavkas);
                         break;
                     case 2:
-                        Program.FindMenu();
+                        Program.FindMenu(computers, pristavkas);
                         break;
                     case 3:
                         if (computers.Count != 0 || pristavkas.Count != 0)
                         {
-                            // MakeOrder(tours, users, orders, name);
+                            MakeOrder(computers, pristavkas, orders, users, users[1].Login);
                         }
                         break;
                     default:
@@ -79,7 +88,10 @@ namespace game_shop
             }
         }
         static void MyOrder(List<User> users, List<Order> orders)
-        {/*
+        {
+            Console.WriteLine("Список пуст");
+            return;
+            /*
             bool IsHave = false;
             User user = new User();
             user = Program.GetUser(users, login);
@@ -136,7 +148,7 @@ namespace game_shop
                 TableSeparatorCatalog();
                 Program.ProductTable(computers, pristavkas);
                 TableSeparatorBasket(orderTour.Count);
-                OrderTourTable(orderTour);
+                OrderTourTable(orderTour, computers, pristavkas);
 
                 Console.WriteLine($"1) Добавить товар\n2) Удалить товар\n3) Подтвердить заказ\n0) Назад");
                 Console.Write(">");
@@ -156,7 +168,7 @@ namespace game_shop
                         OrderAdd(orders, computers, pristavkas, ref orderTour, users, login);
                         break;
                     case 2:
-                        OrderDelete(ref orderTour);
+                        OrderDelete(ref orderTour, computers, pristavkas);
                         break;
                     case 3:
                         ConfirmOrder(orders, orderTour, users, login);
@@ -230,10 +242,10 @@ namespace game_shop
             }
         }
 
-        static void OrderDelete(ref List<Order> orderTours)
+        static void OrderDelete(ref List<Order> orderTours, List<Computer> computers, List<Pristavka> pristavkas)
         {
             Console.Clear();
-            OrderTourTable(orderTours);
+            OrderTourTable(orderTours, computers, pristavkas);
 
             Console.Write("Введите id удаляемой экскурсии\n>");
             try
@@ -326,28 +338,33 @@ namespace game_shop
             Program.WriteToFileOrder(orders);
             Program.WriteToFileUser(users);
         }
-        static void OrderTourTable(List<Order> orderTours)
+        static void OrderTourTable(List<Order> orders, List<Computer> computers, List<Pristavka> pristavkas)
         {
-            if (orderTours.Count == 0)
+            if (orders.Count == 0)
             {
                 Console.WriteLine("Список пуст");
                 return;
             }
 
-            List<Tour> tours = new List<Tour>();
-            Tour tour;
-            foreach (Tour tourData in orderTours)
+            List<Computer> computer1 = new List<Computer>();
+            List<Pristavka> pristavkas1 = new List<Pristavka>();
+
+            int id = 0;
+            foreach (Order order in orders)
             {
-                tour = new Tour();
-                tour.Id = tourData.Id;
-                tour.Cost = tourData.Cost;
-                tour.Name = tourData.Name;
-                tour.Hostel = tourData.Hostel;
-                tour.Country = tourData.Country;
-                tour.Duration = tourData.Duration;
-                tours.Add(tour);
+
+                if(computers[id].Id == order.Id)
+                {
+                    computer1.Add(computers[id]);
+                }
+                else if (pristavkas[id].Id == order.Id)
+                {
+                    pristavkas1.Add(pristavkas[id]);
+                }
+                ++id;
             }
-            Program.TourTable(tours);
+
+            Program.ProductTable(computer1, pristavkas1);
         }
         static void TableSeparatorCatalog() => Console.WriteLine(new string('-', 20) + " Каталог " + new string('-', 20));
         static void TableSeparatorBasket(int count) => Console.WriteLine(new string('-', 20) + $" Корзина ({count}) " + new string('-', 20));

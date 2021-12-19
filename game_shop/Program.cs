@@ -72,11 +72,11 @@ namespace game_shop
         
     }
     [Serializable]
-    class Vnytrenosty : Tovar
+    class Vnytrenosty : Tovar, ICommnad
     {
         public int OperationMemory { get; set; }
 
-        public void Add(int id)
+        public virtual void Add(int id)
         {
             Console.Write("Название: ");
             Name = Console.ReadLine();
@@ -92,9 +92,9 @@ namespace game_shop
     {
         public string GraphicCart { get; set; }
         public string CPU { get; set; }
-        void ICommnad.Add(int id)
+        public override void Add(int id)
         {
-            Add(id);
+            base.Add(id);
             Console.Write("Видео карта: ");
             GraphicCart = Console.ReadLine();
             Console.Write("Процессор: ");
@@ -299,9 +299,41 @@ namespace game_shop
                 }
             }
         }
-        public static void FindMenu()
+        public static void FindMenu(List<Computer> computers, List<Pristavka> pristavkas)
         {
-
+            while (true)
+            {
+                int choose = 0;
+                Console.Clear();
+                Console.WriteLine("1. Поиск по названию\n2. Поиск по видеокарте\n3. Поиск по цене\n0. Назад\n>");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    DisplayMessage(ex.Message);
+                }
+                switch (choose)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        Find.KeyWord(computers, pristavkas);
+                        break;
+                    case 2:
+                        Find.SearchCountry(computers, pristavkas);
+                        break;
+                    case 3:
+                        Find.Price(computers,pristavkas);
+                        break;
+                    case 4:
+                        break;
+                    default:
+                        DisplayMessage("Некорректный ввод");
+                        break;
+                }
+            }
         }
         public static User GetUser(List<User> users, int id)
         {
@@ -395,7 +427,7 @@ namespace game_shop
 
             foreach (Computer computer in computers)
             {
-                table.AddRow(computer.Id, computer.Name, computer.Price + " BYN", computer.OperationMemory + " ГБ", computer.GraphicCart, computer.CPU, "-", "-");
+                table.AddRow(computer.Id, computer.Name, computer.Price + " BYN", computer.OperationMemory + " ГБ", computer.GraphicCart, computer.CPU);
             }
 
             table.Print();
