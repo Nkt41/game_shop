@@ -247,7 +247,7 @@ namespace game_shop
             Console.Clear();
             OrderTourTable(orderTours, computers, pristavkas);
 
-            Console.Write("Введите id удаляемой экскурсии\n>");
+            Console.Write("Введите id удаляемой заказа\n>");
             try
             {
                 int numDeleteProduct = Convert.ToInt32(Console.ReadLine());

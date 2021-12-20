@@ -35,7 +35,7 @@ namespace game_shop
                         UsersMenu(users);
                         break;
                     case 3:
-                        OrderMenu(orders);
+                        OrderMenu(orders, computers, pristavkas);
                         break;
                     case 4:
                         ProfilMenu(users);
@@ -382,7 +382,7 @@ namespace game_shop
             int idDeleteProduct = 0;
             bool first = false;
             Program.ProductTable(computers, pristavkas);
-            Console.Write("ID удаляемого тура: ");
+            Console.Write("ID удаляемого товара: ");
 
             try
             {
@@ -578,10 +578,94 @@ namespace game_shop
             Program.WriteToFileUser(users);
         }
 
-        static void OrderMenu(List<Order> orders)
+        static void OrderMenu(List<Order> orders, List<Computer> comparers, List<Pristavka> pristavkas)
         {
+            while (true)
+            {
+                Console.Clear();
+                int choose = 0;
+                OrderTable(orders);
+                Console.WriteLine("1) Подтвердить заказ\n0) Назад");
+                Console.Write(">");
+                try
+                {
+                    choose = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    Program.DisplayMessage(ex.Message);
+                }
 
+                if (orders.Count == 0 && choose == 1)
+                {
+                    continue;
+                }
+
+                switch (choose)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        ConfirmOrder(orders, comparers, pristavkas);
+                        break;
+                    default:
+                        Console.WriteLine("Некорректный ввод");
+                        break;
+                }
+            }
         }
+
+        static void ConfirmOrder(List<Order> orders, List<Computer> comparers, List<Pristavka> pristavkas)
+        {
+            Console.Clear();
+            int idProduct;
+
+            OrderTable(orders);
+            Console.Write("Введите id: ");
+            try
+            {
+                idProduct = Convert.ToInt32(Console.ReadLine());
+                for (int i = 0; i < orders.Count; i++)
+                {
+                    if (orders[i].Id == idProduct)
+                    {
+                        idProduct = i;
+                        break;
+                    }
+                }
+                orders.RemoveAt(idProduct);
+            }
+            catch (Exception ex)
+            {
+                Program.DisplayMessage(ex.Message);
+                Console.ReadLine();
+            }
+
+            Program.WriteToFileOrder(orders);
+        }
+        static void OrderTable(List<Order> orders)
+        {
+            if (orders.Count != 0)
+            {
+                string[] empty = new string[4];
+                for (int i = 0; i < empty.Length; i++)
+                {
+                    empty[i] = "";
+                }
+                var table = new Table("Id экскурсии", "Id клиент", "Название", "Цена");
+                foreach (Order order in orders)
+                {
+                    table.AddRow(order.Id, 0, order.Name, String.Format("{0:f}", order.Price) + " BYN");
+                    table.AddRow(empty);
+                }
+                table.Print();
+            }
+            else
+            {
+                Console.WriteLine("Список пуст");
+            }
+        }
+
         static void ProfilMenu(List<User> users)
         {
             Console.Clear();

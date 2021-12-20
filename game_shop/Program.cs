@@ -60,7 +60,12 @@ namespace game_shop
     [Serializable]
     class Order : Tovar
     {
-
+        List<Order> myOrders = new List<Order>();
+        public List<Order> MyOrders
+        {
+            get { return myOrders; }
+            set { myOrders = value; }
+        }
     }
 
     [Serializable]
@@ -103,18 +108,17 @@ namespace game_shop
 
     }
     [Serializable]
-    class Pristavka : Vnytrenosty, ICommnad
+    class Pristavka : Vnytrenosty
     {
         public string Color { get; set; }
         public bool Discovod { get; set; }
-        void ICommnad.Add(int id)
+        public override void Add(int id)
         {
-            Add(id);
+            base.Add(id);
             Console.Write("Цвет: ");
             Color = Console.ReadLine();
             Console.Write("Дисковод (true / false): ");
             Discovod = Convert.ToBoolean(Console.ReadLine());
-            Id = id;
         }
     }
     class Program

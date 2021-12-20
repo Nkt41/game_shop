@@ -97,7 +97,7 @@ namespace game_shop
             }
             else
             {
-                Console.WriteLine($"Экскурсии по введённым данным \'{country}\' нету в каталоге");
+                Console.WriteLine($"Товара по введённым данным \'{country}\' нету в каталоге");
             }
 
             Console.ReadLine();
@@ -130,7 +130,7 @@ namespace game_shop
             }
             else
             {
-                Console.WriteLine("Экскурсии в данном диапозоне отсутствуют");
+                Console.WriteLine("Товар в данном диапозоне отсутствуюет");
             }
 
             Console.ReadLine();
