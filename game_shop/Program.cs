@@ -53,13 +53,19 @@ namespace game_shop
         }
         public void Add()
         {
-
+            Console.Write("Фамилия: ");
+            Surname = Console.ReadLine();
+            Console.Write("Адрес: ");
+            Address = Console.ReadLine();
+            Console.Write("Номер телефона: ");
+            PhoneNumber = Console.ReadLine();
         }
     }
 
     [Serializable]
     class Order : Tovar
     {
+        public int IdUser { get; set; }
         List<Order> myOrders = new List<Order>();
         public List<Order> MyOrders
         {
@@ -139,6 +145,12 @@ namespace game_shop
                 Registration(users, "admin");
             }
 
+            if(computers.Count == 0 && pristavkas.Count == 0)
+            {
+                int uniqueId = 0;
+                File.WriteAllText("uniqueIdTour", uniqueId.ToString());
+            }
+
             Menu(users, computers, pristavkas, orders);
         }
         static void Menu(List<User> users, List<Computer> computers, List<Pristavka> pristavkas, List<Order> orders)
@@ -163,7 +175,8 @@ namespace game_shop
                     case 0:
                         return;
                     case 1:
-                        if(IsLogin(users, "admin"))
+                        string login = IsLogin(users, "admin");
+                        if (login != null)
                         {
                             Admin.Menu(users, pristavkas, computers, orders);
                         }
@@ -182,7 +195,7 @@ namespace game_shop
                 }
             }
         }
-        static bool IsLogin(List<User> users, string access)
+        static string IsLogin(List<User> users, string access)
         {
             Console.Clear();
             string login = "", password = "";
@@ -196,11 +209,11 @@ namespace game_shop
                 if(user.Login == login && user.Password == password && user.Access == access)
                 {
                     DisplayMessage("Вход выполнен успешно");
-                    return true;
+                    return user.Login;
                 }    
             }
             
-            return false;
+            return null;
         }
         static void Registration(List<User> users, string access)
         {
@@ -247,9 +260,10 @@ namespace game_shop
                     case 0:
                         return;
                     case 1:
-                        if (IsLogin(users, "user"))
+                        string login = IsLogin(users, "user");
+                        if (login != null)
                         {
-                            Client.Menu(users, pristavkas, computers, orders);
+                            Client.Menu(users, pristavkas, computers, orders, login);
                         }
                         else
                         {
@@ -401,7 +415,7 @@ namespace game_shop
         {
             if(computers.Count == 0 && pristavkas.Count == 0)
             {
-                Console.Write("Список пуст");
+                Console.Write("Список пуст\n");
                 return;
             }
 
@@ -423,7 +437,7 @@ namespace game_shop
         {
             if (computers.Count == 0)
             {
-                Console.Write("Список пуст");
+                Console.Write("Список пуст\n");
                 return;
             }
 
@@ -441,7 +455,7 @@ namespace game_shop
         {
             if (pristavkas.Count == 0)
             {
-                Console.Write("Список пуст");
+                Console.Write("Список пуст\n");
                 return;
             }
 

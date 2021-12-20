@@ -6,10 +6,11 @@ namespace game_shop
 {
     class Client
     {
-        public static void Menu(List<User> users, List<Pristavka> pristavkas, List<Computer> computers, List<Order> orders)
+        public static void Menu(List<User> users, List<Pristavka> pristavkas, List<Computer> computers, List<Order> orders, string login)
         {
             while (true)
             {
+                Console.Clear();
                 int choose = 0;
                 Console.WriteLine($"1) Просмотр Товара\n2) Мои покупки\n3) Изменить логин или пароль\n0) Назад");
                 try
@@ -28,11 +29,9 @@ namespace game_shop
                         ProductMenu(computers, pristavkas, orders, users);
                         break;
                     case 2:
-                        MyOrder(users, orders);
+                        MyOrder(users, orders, login);
                         break;
                     case 3:
-                        Console.Write("Введите логин:");
-                        string login = Console.ReadLine();
                         for (int i = 0; i < users.Count; i++)
                         {
                             if (users[i].Login == login)
@@ -87,54 +86,36 @@ namespace game_shop
                 }
             }
         }
-        static void MyOrder(List<User> users, List<Order> orders)
+        static void MyOrder(List<User> users, List<Order> orders, string login)
         {
-            Console.WriteLine("Список пуст");
-            return;
-            /*
-            bool IsHave = false;
+            bool isHave = false;
             User user = new User();
-            user = Program.GetUser(users, login);
-
-            while (true)
+            foreach(User userData in users)
             {
-                Console.Clear();
-                int choose = 0;
-                foreach (Trip ticket in tickets)
+                if(user.Login == login)
                 {
-                    if (ticket.IdUser == user.Id)
-                    {
-                        IsHave = true;
-                        var tablePrinter = new TablePrinter("Id клиент", "Id экускурсии", "Дата отправления", "Фамилия", "Имя", "Номер телефона", "Адрес");
-                        tablePrinter.AddRow(ticket.IdUser, ticket.IdTour, ticket.departureDate, user.Surname, user.Name, user.PhoneNumber, user.Address);
-                        tablePrinter.Print();
-                    }
+                    user = userData;
                 }
+            }
+            var table = new Table("Id", "Id user", "Название", "Цена");
 
-                if (!IsHave)
+            foreach (Order order in orders)
+            {
+                if(order.IdUser == user.Id)
                 {
-                    Console.WriteLine("Спико пуст\n");
+                    isHave = true;
+                    table.AddRow(order.Id, order.IdUser, order.Name, order.Price + " BYN");
                 }
-
-                Console.WriteLine($"0) Назад");
-                Console.Write(">");
-                try
-                {
-                    choose = Convert.ToInt32(Console.ReadLine());
-                }
-                catch (Exception ex)
-                {
-                    Program.DisplayMessage(ex.Message);
-                }
-                switch (choose)
-                {
-                    case 0:
-                        return;
-                    default:
-                        Console.WriteLine("Некорректный ввод");
-                        break;
-                }
-            }*/
+            }
+            if (isHave)
+            {
+                table.Print();
+            }
+            else
+            {
+                Console.WriteLine("Список пуст");
+                Console.ReadLine();
+            }
         }
         static void MakeOrder(List<Computer> computers, List<Pristavka> pristavkas, List<Order> orders, List<User> users, string login)
         {
@@ -211,30 +192,34 @@ namespace game_shop
                         break;
                     }
                 }
-                for (i = 0; i < pristavkas.Count; i++)
+                if(!first)
                 {
-                    if (pristavkas[i].Id == numAddTour)
+                    for (i = 0; i < pristavkas.Count; i++)
                     {
-                        numAddTour = i;
-                        break;
+                        if (pristavkas[i].Id == numAddTour)
+                        {
+                            numAddTour = i;
+                            break;
+                        }
                     }
                 }
 
                 Order order = new Order();
                 if (first)
                 {
-                    order.Id = computers[i].Id;
-                    order.Name = computers[i].Name;
-                    order.Price = computers[i].Price;
+                    order.Id = computers[numAddTour].Id;
+                    order.Name = computers[numAddTour].Name;
+                    order.Price = computers[numAddTour].Price;
                 }
                 else
                 {
-                    order.Id = pristavkas[i].Id;
-                    order.Name = pristavkas[i].Name;
-                    order.Price = pristavkas[i].Price;
+                    order.Id = pristavkas[numAddTour].Id;
+                    order.Name = pristavkas[numAddTour].Name;
+                    order.Price = pristavkas[numAddTour].Price;
                 }
 
                 orderTours.Add(order);
+                Program.DisplayMessage("Добавлено");
             }
             catch (Exception ex)
             {
@@ -297,7 +282,7 @@ namespace game_shop
                 return;
             }
 
-            if (user.Address == null)
+            if (user.Surname == null)
             {
                 users[idUser].Add();
                 user = users[idUser];
@@ -330,6 +315,7 @@ namespace game_shop
 
             for (int i = 0; i < orderTours.Count; i++)
             {
+                orderTours[i].IdUser = user.Id;
                 orders.Add(orderTours[i]);
             }
             orderTours.Clear();
